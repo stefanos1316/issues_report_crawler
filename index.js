@@ -3,7 +3,22 @@ const { Command } = require('commander');
 const program = new Command();
 const request = require('superagent');
 const xml2jsParser = require('superagent-xml2jsparser');
-const fs = require('fs'); 
+const fs = require('fs');
+const winston = require('winston');
+
+
+// Creating our logger object 
+const logger = winston.createLogger({
+    transports: [
+      new winston.transports.Console(),
+      new winston.transports.File({ filename: 'combined.log' })
+    ]
+  });
+
+logger.log({
+    level: 'info',
+    message: 'Reporting only missing fields from the CAMEL issues.'
+  });
 
 // Note that currently we are only going to extract XML and then convert it to JSON data
 var link = "https://issues.apache.org/jira/si/jira.issueviews:issue-xml/";
@@ -29,8 +44,15 @@ program
                 firstLine = 'Title, Type, Priority, Affected Version/s, Component/s, Labels,' 
                     + 'Status, Resolution, Assignee, Reporter, Created, Updated, Resolved,'
                     + 'Summary, Link, Votes, Description, Patch Info, Estimated Complexity';
-                for (var i = 0 ; i < element.comments[0].comment.length; ++i)
-                    firstLine += ', Comment_' + (i + 1);
+                
+                // Check if the any of the following elements are missing
+                'version' in element ? firstLine += ', Affected Version/s': logger.info('[CAMEL-' + program.issue + "] affected version/s missing.");
+                if ('comments' in element) {
+                    for (var i = 0 ; i < element.comments[0].comment.length; ++i)
+                        firstLine += ', Comment_' + (i + 1);
+                } else {
+                    logger.info('[CAMEL-' + program.issue + "] comments are missing.");
+                }
 
                 secondLine = element.title[0] + ', ' + element.type[0]['']  + ', ' +  element.priority[0]['_']
                     + ', ' + element.version[0] + ', ' + element.component[0] + ', ' + element.labels[0].replace(/\r?\n|\r/g, " ")
@@ -40,8 +62,12 @@ program
                     + ', ' + element.description[0].replace(/<[^>]*>?/gm, '').replace(/\r?\n|\r/g, " ").replace(/ +(?= )/g,'')
                     + ', ' + element.customfields[0].customfield[7].customfieldvalues[0].customfieldvalue[0]['_']
                     + ', ' + element.customfields[0].customfield[4].customfieldvalues[0].customfieldvalue[0]['_'];
-                for (var i = 0 ; i < element.comments[0].comment.length; ++i)
-                    secondLine += ', ' + element.comments[0].comment[i]['_'].replace(/<[^>]*>?/gm, '').replace(/\r?\n|\r/g, " ").replace(/ +(?= )/g,'');
+
+                // Check if the any of the following elements are missing are log
+                if ('comments' in element) {
+                    for (var i = 0 ; i < element.comments[0].comment.length; ++i)
+                        secondLine += ', ' + element.comments[0].comment[i]['_'].replace(/<[^>]*>?/gm, '').replace(/\r?\n|\r/g, " ").replace(/ +(?= )/g,'');
+                }
 
                 // Write to defined file if was option given
                 if (program.ouput) {
