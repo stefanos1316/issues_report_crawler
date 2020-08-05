@@ -42,6 +42,7 @@ program
                 for (var i = 0 ; i < element.comments[0].comment.length; ++i)
                     secondLine += ', ' + element.comments[0].comment[i]['_'].replace(/<[^>]*>?/gm, '').replace(/\r?\n|\r/g, " ").replace(/ +(?= )/g,'');
 
+                // Write to defined file if was option given
                 if (program.ouput) {
                     try {
                         if (fs.existsSync(path)) {
@@ -56,7 +57,7 @@ program
                 } else {
                     try {
                         if (fs.existsSync('output.csv')) {
-                          //if file exists delete
+                          // If file exists delete
                           fs.unlinkSync('output.csv') 
                         }
                       } catch(err) {
@@ -65,28 +66,6 @@ program
                     fs.appendFileSync('output.csv', firstLine);
                     fs.appendFileSync('output.csv', secondLine);
                 }
-
-                // console.log('Title: ' + element.title[0]);
-                // console.log('Type: ' + element.type[0]['_']);
-                // console.log('Priority: ' + element.priority[0]['_']);
-                // console.log('Affected Version/s: ' + element.version[0]);
-                // console.log('Component/s: ' + element.component[0]);
-                // console.log('Labels: ' + element.labels[0].replace(/\r?\n|\r/g, " "));
-                // console.log('Status: ' + element.status[0]['_']);
-                // console.log('Resolution: ' + element.resolution[0]['_']);
-                // console.log('Assignee: ' + element.assignee[0]['_']);
-                // console.log('Reporter: ' + element.reporter[0]['_']);
-                // console.log('Created: ' + element.created[0]);
-                // console.log('Updated: ' + element.updated[0]);
-                // console.log('Resolved: ' + element.resolved[0]);
-                // console.log('Summary: ' + element.summary[0]);
-                // console.log('Link: ' + element.link[0]);
-                // console.log('Votes: ' + element.votes[0]);
-                // // The railways below are removing HTML tags, tabs, double spaces, and new lines
-                // console.log('Description: ' + element.description[0].replace(/<[^>]*>?/gm, '').replace(/\r?\n|\r/g, " ").replace(/ +(?= )/g,''));
-                // for (var i = 0 ; i < element.comments[0].comment.length; ++i)
-                //     console.log('Comment_' + (i + 1) + ': ' + element.comments[0].comment[i]['_'].replace(/<[^>]*>?/gm, '').replace(/\r?\n|\r/g, " ").replace(/ +(?= )/g,''));
-
             });      
     } catch (error) {
       console.log(error.response);
