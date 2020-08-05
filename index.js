@@ -19,30 +19,33 @@ program
             link = link + "CAMEL-" + program.issue + "/CAMEL-" + program.issue + ".xml";  
         }
 
-
         await request
             .get(link)
             .accept('xml')
             .parse(xml2jsParser) // add the parser function
             .end(function(err, res){
                 var element = res.body.rss.channel[0].item[0];
+                console.log('Title: ' + element.title[0]);
                 console.log('Type: ' + element.type[0]['_']);
                 console.log('Priority: ' + element.priority[0]['_']);
-                console.log('Affected Version/s: ' + element.version[0]['_']);
+                console.log('Affected Version/s: ' + element.version[0]);
                 console.log('Component/s: ' + element.component[0]['_']);
                 console.log('Labels: ' + element.labels[0]['_']);
                 console.log('Status: ' + element.status[0]['_']);
                 console.log('Resolution: ' + element.resolution[0]['_']);
                 console.log('Assignee: ' + element.assignee[0]['_']);
+                console.log('Reporter: ' + element.reporter[0]['_']);
+                console.log('Created: ' + element.created[0]);
+                console.log('Updated: ' + element.updated[0]);
+                console.log('Resolved: ' + element.resolved[0]);
+                console.log('Summary: ' + element.summary[0]);
+                console.log('Link: ' + element.link[0]);
+                console.log('Votes: ' + element.votes[0]);
+                // The railways below are removing HTML tags, tabs, double spaces, and new lines
                 console.log('Description: ' + element.description[0].replace(/<[^>]*>?/gm, '').replace(/\r?\n|\r/g, " ").replace(/ +(?= )/g,''));
-                if (Object.keys(element.comments[0].comment).length > 1) {
-                    var myJSON = JSON.stringify(element.comments[0].comment);
-                    myJSON.forEach(function(element) {
-                        console.log(element['0']['_']);
-                      });
-                } else {
-                    console.log('Fix Version/s: ' + element.comments[0]['_']);
-                }
+                for (var i = 0 ; i < element.comments[0].comment.length; ++i)
+                    console.log('Comment_' + (i + 1) + ': ' + element.comments[0].comment[i]['_'].replace(/<[^>]*>?/gm, '').replace(/\r?\n|\r/g, " ").replace(/ +(?= )/g,''));
+
             });      
     } catch (error) {
       console.log(error.response);
