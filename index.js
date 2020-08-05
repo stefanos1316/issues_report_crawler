@@ -77,7 +77,7 @@ program
                 }
 
                 // Write to defined file if was option given
-                if (!program.ouput) {
+                if (program.output) {
                     try {
                         if (fs.existsSync(program.output)) {
                           //if file exists delete
