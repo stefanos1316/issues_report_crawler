@@ -1,0 +1,28 @@
+{
+  "name": "issues_report_crawler",
+  "version": "1.0.0",
+  "description": "This is the second task for my Postdoctoral interview where I am supposed to develop a crawler to parse Apache Camel reports from Jira. And I am very sure that Guoliang is more interested in this task rather than the first, I will try to offer a good quality of code. But note that this tool will be in BASH :P",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/stefanos1316/issues_report_crawler.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stefanos1316/issues_report_crawler/issues"
+  },
+  "homepage": "https://github.com/stefanos1316/issues_report_crawler#readme",
+  "dependencies": {
+    "commander": "^6.0.0",
+    "node-easy-docx": "^0.1.3",
+    "superagent": "^5.3.1",
+    "superagent-xml2jsparser": "^0.1.1",
+    "xml-js": "^1.6.11",
+    "xml2js": "^0.4.23",
+    "xml2json": "^0.12.0"
+  }
+}

@@ -5,3 +5,5 @@ develop a crawler to parse Apache Camel reports from Jira.
 And I am very sure that Guoliang is more interested in this task rather than
 the first, I will try to offer a good quality of code.
 But note that this tool will be in BASH :P
+
+On second, it think it might be easier in JavaScrit (NodeJS)
