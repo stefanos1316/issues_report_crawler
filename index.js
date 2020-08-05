@@ -9,8 +9,7 @@ const fs = require('fs');
 var link = "https://issues.apache.org/jira/si/jira.issueviews:issue-xml/";
 
 program
-  .option('-d, --debug', 'output extra debugging')
-  .option('-o, --output', 'output CSV file')
+  .option('-o, --output <fileName>', 'output CSV file')
   .option('-i, --issue <number>', 'number of the Apache Camel issue (e.g., 10597)');
 
 (async () => {
