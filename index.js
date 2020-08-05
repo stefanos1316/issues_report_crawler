@@ -29,7 +29,7 @@ program
 
                 firstLine = 'Title, Type, Priority, Affected Version/s, Component/s, Labels,' 
                     + 'Status, Resolution, Assignee, Reporter, Created, Updated, Resolved,'
-                    + 'Summary, Link, Votes, Description';
+                    + 'Summary, Link, Votes, Description, Patch Info, Estimated Complexity';
                 for (var i = 0 ; i < element.comments[0].comment.length; ++i)
                     firstLine += ', Comment_' + (i + 1);
 
@@ -38,7 +38,9 @@ program
                     + ', ' + element.status[0]['_'] + ', ' + element.resolution[0]['_'] + ', ' + element.assignee[0]['_']
                     + ', ' + element.reporter[0]['_'] + ', ' + element.created[0] + ', ' + element.updated[0]
                     + ', ' + element.resolved[0] + ', ' + element.summary[0] + ', ' + element.link[0] + ', ' + element.votes[0]
-                    + ', ' + element.description[0].replace(/<[^>]*>?/gm, '').replace(/\r?\n|\r/g, " ").replace(/ +(?= )/g,'');
+                    + ', ' + element.description[0].replace(/<[^>]*>?/gm, '').replace(/\r?\n|\r/g, " ").replace(/ +(?= )/g,'')
+                    + ', ' + element.customfields[0].customfield[7].customfieldvalues[0].customfieldvalue[0]['_']
+                    + ', ' + element.customfields[0].customfield[4].customfieldvalues[0].customfieldvalue[0]['_'];
                 for (var i = 0 ; i < element.comments[0].comment.length; ++i)
                     secondLine += ', ' + element.comments[0].comment[i]['_'].replace(/<[^>]*>?/gm, '').replace(/\r?\n|\r/g, " ").replace(/ +(?= )/g,'');
 
