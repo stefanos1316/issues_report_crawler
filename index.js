@@ -1,4 +1,3 @@
-const xml2js = require('xml2js');
 const { Command } = require('commander');
 const program = new Command();
 const request = require('superagent');
@@ -27,6 +26,28 @@ program
   .option('-o, --output <fileName>', 'output CSV file')
   .option('-i, --issue <number>', 'number of the Apache Camel issue (e.g., 10597)');
 
+
+async function getElementNames(element) {
+    var returnString = '';
+    for (var i = 0 ; i < element.comments[0].comment.length; ++i)
+        returnString += ', Comment_' + (i + 1);
+    
+    return returnString;
+} 
+
+
+async function getElementValues(element) {
+    var returnString = '';
+    for (var i = 0 ; i < element.comments[0].comment.length; ++i)
+        returnString += ', ' + element.comments[0].comment[i]['_']
+            .replace(/<[^>]*>?/gm, '')
+            .replace(/\r?\n|\r/g, " ")
+            .replace(/ +(?= )/g,'');
+    
+    return returnString;
+}
+
+
 (async () => {
     try {
         await program.parse(process.argv);
@@ -38,7 +59,7 @@ program
             .get(link)
             .accept('xml')
             .parse(xml2jsParser) // add the parser function
-            .end(function(err, res){
+            .end(async function(err, res){
                 var element = res.body.rss.channel[0].item[0];
 
                 firstLine = 'Title, Type, Priority, Component/s, Labels,' 
@@ -46,14 +67,12 @@ program
                     + 'Summary, Link, Votes, Description';
                 
                 // Check if any of the following elements are missing
-                'version' in element ? firstLine += ', Affected Version/s' : logger.info('[CAMEL-' + program.issue + "] affected version/s missing.");
-                'resolved' in element ? firstLine += ', Resolved' : logger.info('[CAMEL-' + program.issue + "] resolved missing.");
-                if ('comments' in element) {
-                    for (var i = 0 ; i < element.comments[0].comment.length; ++i)
-                        firstLine += ', Comment_' + (i + 1);
-                } else {
-                    logger.info('[CAMEL-' + program.issue + "] comments are missing.");
-                }
+                'version' in element ? firstLine += ', Affected Version/s'
+                    : logger.info('[CAMEL-' + program.issue + "] affected version/s obj key is missing.");
+                'resolved' in element ? firstLine += ', Resolved'
+                    : logger.info('[CAMEL-' + program.issue + "] resolved obj key is missing.");
+                'comments' in element ? firstLine += await getElementNames(element)
+                    : logger.info('[CAMEL-' + program.issue + "] comments obj keys are missing.");
 
                 secondLine = element.title[0] + ', ' + element.type[0]['_']  + ', ' +  element.priority[0]['_']
                     + ', ' + element.component[0] + ', ' + element.labels[0].replace(/\r?\n|\r/g, " ")
@@ -66,21 +85,12 @@ program
                         .replace(/ +(?= )/g,'');
 
                 // Check if the any of the following elements are missing are log
-                if ('version' in element) {
-                    secondLine += ', ' + element.version[0];
-                }
-
-                if ('resolved' in element) {
-                    secondLine += ', ' + element.resolved[0];
-                }
-
-                if ('comments' in element) {
-                    for (var i = 0 ; i < element.comments[0].comment.length; ++i)
-                        secondLine += ', ' + element.comments[0].comment[i]['_']
-                            .replace(/<[^>]*>?/gm, '')
-                            .replace(/\r?\n|\r/g, " ")
-                            .replace(/ +(?= )/g,'');
-                }
+                'version' in element ? secondLine += ', ' + element.version[0]
+                    : logger.info('[CAMEL-' + program.issue + "] affected version/s obj value is missing.");
+                'resolved' in element ? secondLine += ', ' + element.resolved[0]
+                    : logger.info('[CAMEL-' + program.issue + "] resolved obj value is missing.");
+                'comments' in element ? secondLine += await  getElementValues(element)
+                    : logger.info('[CAMEL-' + program.issue + "] comments obj values are missing.")
 
                 // Write to defined file if was option given
                 if (program.output) {
@@ -105,7 +115,7 @@ program
                         console.error(err);
                       }
                     fs.appendFileSync('output.csv', firstLine);
-                    fs.appendFileSync(program.output, '\n');
+                    fs.appendFileSync('output.csv', '\n');
                     fs.appendFileSync('output.csv', secondLine);
                 }
             });      

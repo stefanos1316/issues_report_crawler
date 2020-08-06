@@ -2,3 +2,6 @@ node_modules/*
 output.csv
 combined.log
 tmp/*
+*.csv
+*.swp
+*.swo
