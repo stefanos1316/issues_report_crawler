@@ -11,6 +11,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
+            "args": ["-i", "11812"],
             "program": "${workspaceFolder}/index.js"
         }
     ]
